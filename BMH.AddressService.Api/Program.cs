@@ -1,4 +1,8 @@
+using BMH.AddressService.Application;
+using BMH.AddressService.Application.Dto;
+using BMH.AddressService.Domain.Enum;
 using BMH.AddressService.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +24,22 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapPost("/validateaddress", async (IAddressService addressService, AddressInputDto address) =>
+{
+    if (address == null)
+    {
+        throw new ArgumentException("Addresse dto er tom");
+    }
+
+    var status = await addressService.ValidateAddress(address);
+
+    return status switch
+    {
+        ValidStatus.Valid => Results.Ok("Valid"),
+        ValidStatus.Invalid => Results.BadRequest("Invalid"),
+    };
+});
 
 
 

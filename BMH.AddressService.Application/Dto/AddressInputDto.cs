@@ -11,5 +11,7 @@ namespace BMH.AddressService.Application.Dto
         public string Street { get; set; }
         public string HouseNr { get; set; }
         public string PostalCode { get; set; }
+        public string? Floor { get; set; }
+        public string? door { get; set; }
     }
 }

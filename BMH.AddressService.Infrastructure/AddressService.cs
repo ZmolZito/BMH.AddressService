@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMH.AddressService.Domain.Enum;
+using System.ComponentModel.Design.Serialization;
 
 namespace BMH.AddressService.Infrastructure
 {
@@ -17,11 +19,16 @@ namespace BMH.AddressService.Infrastructure
             _httpClient = httpClient;
         }
 
-        async Task<string> IAddressService.ValidateAddress(AddressInputDto addressDto)
+        async Task<ValidStatus> IAddressService.ValidateAddress(AddressInputDto addressDto)
         {
             var response = await _httpClient.GetStringAsync($"/adresser?vejnavn={addressDto.Street}");
 
-            return response;
+            if (string.IsNullOrWhiteSpace(response) || response.Trim() == "[]" || response.Trim() == "[\\n\\n]" || response.Trim() == "[\n\n]")
+            {
+                return ValidStatus.Invalid;
+            }
+
+            return ValidStatus.Valid;
         }
     }
 }
